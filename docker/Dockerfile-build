@@ -1,0 +1,22 @@
+FROM bazel-build:1.1 AS build-env
+#WORKDIR /usr/src/app
+
+# Copy WORKSPACE/BUILD files and fetch dependencies.
+COPY WORKSPACE /usr/src/app
+RUN mkdir -p /usr/src/app/src/main
+COPY /src/main/BUILD /usr/src/app/src/main
+RUN bazel fetch //src/main:main
+
+# Copy all files and run build
+COPY . /usr/src/app/
+RUN make build
+
+# Copy bazel output directory
+RUN make copy_bazel_out_dir
+
+FROM debian:stable
+WORKDIR /app
+# Copy only artifacts
+COPY --from=build-env /usr/src/app/out ./
+
+ENTRYPOINT ["bin/src/main/main"]

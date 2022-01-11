@@ -1,0 +1,57 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Run debug",
+        "type": "lldb",
+        "request": "launch",
+        "program": "${workspaceFolder}/bazel-out/darwin-dbg/bin/src/main/main",
+        "cwd": "${workspaceFolder}/bazel-out/darwin-dbg/bin/src/main/main.runfiles/__main__/",
+        "args": [],
+        "preLaunchTask": "PreRun Debug",
+        "externalConsole": false,
+        "stopAtEntry": true,
+      },
+      {
+        "name": "Run debug (Docker)",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "bazel-out/k8-dbg/bin/src/main/main",
+        /*/source is the location of the solution in the docker container.*/
+        "cwd": "/source",
+        "sourceFileMap": { "/source": "${workspaceFolder}" },
+        "args": [],
+        // "preLaunchTask": "PreRun Debug",
+        "externalConsole": false,
+        "stopAtEntry": true,
+        "pipeTransport": {
+          "debuggerPath": "/usr/bin/gdb",
+          "pipeProgram": "ssh",
+          "pipeArgs": [
+            "-i",
+            ".ssh/build_container_rsa",
+            "-p",
+            "2222",
+            "root@localhost",
+          ],
+          "pipeCwd": "${workspaceFolder}"
+        },
+      },
+      {
+        "name": "Run release",
+        "type": "cppvsdbg",
+        "request": "launch",
+        "args": [],
+        "stopAtEntry": false,
+        "preLaunchTask": "PreRun Release",
+        "externalConsole": false,
+        "osx": {
+          "type": "cppdbg",
+          "MIMode": "lldb",
+          "program": "${workspaceFolder}/bazel-out/darwin-opt/bin/src/main/main",
+          "cwd": "${workspaceFolder}/bazel-out/darwin-opt/bin/src/main/main.runfiles/__main__/"
+        }
+      }
+    ]
+  }
+  

@@ -1,0 +1,11 @@
+.vscode/
+
+bazel-*/
+
+docker/
+
+.ssh/
+
+.DS_Store
+
+.git

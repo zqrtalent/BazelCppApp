@@ -1,0 +1,27 @@
+FROM openjdk:8
+
+RUN echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list \
+  && curl https://bazel.build/bazel-release.pub.gpg | apt-key add -
+
+RUN apt-get update \
+  && apt-get install -y bazel make g++ \
+    build-essential make cmake gdb gdbserver rsync zip git \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update \
+  && apt-get install -y openssh-server
+
+# configure SSH for communication with Visual Studio 
+RUN mkdir -p /var/run/sshd
+
+# Change root password and modify ssh configurations
+RUN echo 'root:root' | chpasswd \
+    && sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config \
+    && sed -i 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' /etc/pam.d/sshd
+
+RUN mkdir -p /source
+WORKDIR /source
+
+CMD ["/usr/sbin/sshd", "-D"]
+
+EXPOSE 22

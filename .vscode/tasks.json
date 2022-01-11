@@ -1,0 +1,159 @@
+{
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "BazelBuild Debug",
+            "command": "bazel",
+            "args": [
+                "build",
+                "//src/main:main",
+                "-c",
+                "dbg", // --compilation_mode (fastbuild|opt|dbg) (-c)
+                "--cxxopt=\"-std=c++2a\"",
+                "--spawn_strategy=standalone",
+            ],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "BazelGenerate dSYM Debug",
+            "command": "bazel",
+            "args": [
+                "build",
+                "//src/main:main_dsym",
+                "-c",
+                "dbg", // --compilation_mode (fastbuild|opt|dbg) (-c)
+                "--cxxopt=\"-std=c++2a\"",
+                "--spawn_strategy=standalone", // Disables sandbox
+            ],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "BazelBuild Release",
+            "command": "bazel",
+            "args": [
+                "build",
+                "//src/main:main",
+                "-c",
+                "opt", // --compilation_mode (fastbuild|opt|dbg) (-c)
+                "--cxxopt=\"-std=c++2a\"",
+                "--copt=\"-g\"", // Generate debug information
+                "--spawn_strategy=standalone",
+            ],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "BazelGenerate dSYM Release",
+            "command": "bazel",
+            "args": [
+                "build",
+                "//src/main:main_dsym",
+                "-c",
+                "opt", // --compilation_mode (fastbuild|opt|dbg) (-c)
+                "--cxxopt=\"-std=c++2a\"",
+                "--copt=\"-g\"", // Generate debug information
+                "--spawn_strategy=standalone", // Disables sandbox
+                "--verbose_failures",
+            ],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "Bazel Clean",
+            "command": "bazel",
+            "args": [
+                "clean"
+            ],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            }
+        },
+        {
+            "label": "Build Debug",
+            "type": "shell",
+            "command": "make build",
+            "dependsOn": [],
+        },
+        {
+            "label": "PreRun Debug",
+            "dependsOn": [
+                "BazelBuild Debug",
+                "BazelGenerate dSYM Debug"
+            ]
+        },
+        {
+            "label": "Build Release",
+            "dependsOn": [
+                "BazelBuild Release"
+            ]
+        },
+        {
+            "label": "PreRun Release",
+            "dependsOn": [
+                "BazelBuild Debug",
+                "BazelGenerate dSYM Release"
+            ]
+        },
+        {
+            "type": "shell",
+            "label": "Test",
+            "command": "bazel",
+            "args": [
+                "test",
+                "//test:main-test"
+            ],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "Build (In Docker)",
+            "command": "make",
+            "args": [
+                "docker_it_build_app"
+            ],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "type": "shell",
+            "label": "Startup Docker Container",
+            "command": "make",
+            "args": [
+                "docker_run_it_build"
+            ],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "SSH Docker Container",
+            "command": "make",
+            "args": [
+                "ssh_it_container"
+            ],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            }
+        },
+
+    ],
+    "version": "2.0.0"
+}
