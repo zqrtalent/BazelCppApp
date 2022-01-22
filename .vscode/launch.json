@@ -2,17 +2,6 @@
     "version": "0.2.0",
     "configurations": [
       {
-        "name": "Run debug",
-        "type": "lldb",
-        "request": "launch",
-        "program": "${workspaceFolder}/bazel-out/darwin-dbg/bin/src/main/main",
-        "cwd": "${workspaceFolder}/bazel-out/darwin-dbg/bin/src/main/main.runfiles/__main__/",
-        "args": [],
-        "preLaunchTask": "PreRun Debug",
-        "externalConsole": false,
-        "stopAtEntry": true,
-      },
-      {
         "name": "Run debug (Docker)",
         "type": "cppdbg",
         "request": "launch",
@@ -29,7 +18,7 @@
           "pipeProgram": "ssh",
           "pipeArgs": [
             "-i",
-            ".ssh/build_container_rsa",
+            ".ssh/bazelcppapp_build_container_rsa",
             "-p",
             "2222",
             "root@localhost",

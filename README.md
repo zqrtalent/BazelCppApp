@@ -8,7 +8,10 @@ BazelCppApp is a sample C++ app using bazel in dockers environment.
 * Run vscode task `'Startup Docker Container'` or run command `make docker_run_it_build`
 
 ## Build application
-Run vscode task `'Build (In Docker)'`
+Run vscode task `'Build (In Docker)'` or run command `'make docker_it_build_app'`
 
-## Run application
-Run vscode startup task `'Run debug (Docker)'`
+## Debug the application
+Run vscode task `'Run debug (Docker)'`
+
+## Run the application
+Run vscode task `'Run app (Docker)'` or run command `'make docker_it_run_app'`

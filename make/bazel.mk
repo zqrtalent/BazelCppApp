@@ -19,6 +19,9 @@ build: bazel_build
 bazel_build:
 	bazel build $(config) $(target) -c $(compilation_mode) $(cxxopts) $(disable_sandbox)
 
+bazel_run:
+	bazel run $(target) -c $(compilation_mode) $(cxxopts) $(disable_sandbox)
+
 bazel_gen_dsym:
 	bazel build $(config) $(package):main_dsym -c $(compilation_mode) $(cxxopts) $(disable_sandbox) --verbose_failures
 

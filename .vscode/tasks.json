@@ -153,6 +153,17 @@
                 "cwd": "${workspaceRoot}"
             }
         },
+        {
+            "type": "shell",
+            "label": "Run app (Docker)",
+            "command": "make",
+            "args": [
+                "docker_it_run_app"
+            ],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            }
+        },
 
     ],
     "version": "2.0.0"

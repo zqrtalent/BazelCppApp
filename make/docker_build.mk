@@ -35,14 +35,20 @@ docker_run_it_build:
 	$(eval CURRENT_PATH=$(shell sh -c "echo $$PWD")) \
 	(docker stop $(app)-$(version) || echo "skip stop container") && \
 	(docker rm $(app)-$(version) || echo "skip remove container") && \
-	docker run --name $(app)-$(version) -d -p $(local_ssh_port):22 -v $(CURRENT_PATH):$(docker_workspace_path) -i $(interractive_build_image)
+	docker run --name $(app)-$(version) -d -p $(local_ssh_port):22 -p 1234:1234 -v $(CURRENT_PATH):$(docker_workspace_path) -i $(interractive_build_image)
 	make docker_it_generate_ssh_key
 	make docker_it_upload_ssh_key
 
-# Build app in the docker. Execute command in the docker container.
-docker_it_build_app:
+docker_startup_it_build:
 	docker inspect $(app)-$(version) --format={{.Id}} || make docker_run_it_build
+
+# Build app in the docker container.
+docker_it_build_app: docker_startup_it_build
 	docker exec -it $(app)-$(version) make build
+
+# Run app in the docker container.
+docker_it_run_app: docker_startup_it_build
+	docker exec -it $(app)-$(version) make bazel_run
 
 # Execute command in the interractive build container.
 # eg: make docker_it_exec command="make build"
@@ -59,7 +65,7 @@ docker_it_generate_ssh_key:
 # Check if [$(docker_host)]:$(local_ssh_port)  is listed in the ~/.ssh/known_hosts file otherwise add it!
 # Copy/Upload public ssh key file into server
 docker_it_upload_ssh_key:
-	(ssh-keygen -F [$(docker_host)]:$(local_ssh_port) || (ssh-keyscan -t rsa,rsa,dsa,ecdsa,ed25519 -p $(local_ssh_port) $(docker_host) >> ~/.ssh/known_hosts)) &&\
+	(ssh-keygen -F [$(docker_host)]:$(local_ssh_port) || (ssh-keyscan -t rsa,dsa,ecdsa,ed25519 -p $(local_ssh_port) $(docker_host) >> ~/.ssh/known_hosts)) &&\
 	ssh-copy-id -i $(ssh_key_file_pub) -p $(local_ssh_port) root@$(docker_host)
 
 # SSH into container.
