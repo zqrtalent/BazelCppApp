@@ -50,6 +50,10 @@ docker_it_build_app: docker_startup_it_build
 docker_it_run_app: docker_startup_it_build
 	docker exec -it $(app)-$(version) make bazel_run
 
+# Run test in the docker container.
+docker_it_run_test:
+	docker exec -it $(app)-$(version) make bazel_test
+
 # Execute command in the interractive build container.
 # eg: make docker_it_exec command="make build"
 docker_it_exec:
